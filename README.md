@@ -3,6 +3,7 @@
 
 ## Description
 Genereates a team profile HTML page with the users input.
+[Video Walkthrough](https://streamable.com/6a0v9f)
 
 ## Table Of Contents
 *[Installation](#install)
