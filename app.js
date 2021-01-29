@@ -9,8 +9,9 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { get } = require("https");
 
-
+const staff = [];
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 const getManagerInfo = () => {
@@ -34,18 +35,128 @@ const getManagerInfo = () => {
             {
                 type: 'input',
                 message: 'What is the office number?',
-                name: 'number'
+                name: 'officeNumber'
             }
         ]).then((res) => {
-            const { name, id, email, number } = res;
-            
+            const { name, id, email, officeNumber } = res;
+
+            staff.push(new Manager(name, id, email, officeNumber));
+            haveManager = true;
+            getEmployeeInfo();
+
+        });
+};
+
+const getEmployeeInfo = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'list',
+                message: 'Add an Employee',
+                choices: [
+                    "Engineer", "Intern", "I am finsihed building my team"
+                ],
+                name: 'option'
+            }
+        ]).then((res) => {
+            const { option } = res;
+
+            switch (option) {
+                case "Engineer":
+                    getEngineerInfo();
+                    break;
+                case "Intern":
+                    getInternInfo();
+                    break;
+                case "I am finsihed building my team":
+                    const team = render(staff);
+                    fs.writeFile(outputPath, team, (err) =>
+
+                        err ? console.error(err) : console.log('Team Created!')
+                    );
+                    return;
+
+            }
+
+        });
+}
+const getEngineerInfo = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the Engineers Name?',
+                name: 'name'
+            },
+            {
+                type: 'input',
+                message: 'What is the Engineers ID?',
+                name: 'id'
+            },
+            {
+                type: 'input',
+                message: 'What is the Engineers email address?',
+                name: 'email'
+            },
+            {
+                type: 'input',
+                message: 'What is the Engineers GitHub username?',
+                name: 'github'
+            }
+        ]).then((res) => {
+            const { name, id, email, github } = res;
+
+            staff.push(new Engineer(name, id, email, github));
+
+            getEmployeeInfo();
+        });
+}
+
+
+const getInternInfo = () => {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'What is the Interns Name?',
+                name: 'name'
+            },
+            {
+                type: 'input',
+                message: 'What is the Interns ID?',
+                name: 'id'
+            },
+            {
+                type: 'input',
+                message: 'What is the Interns email address?',
+                name: 'email'
+            },
+            {
+                type: 'input',
+                message: 'What school does the intern attend?',
+                name: 'school'
+            }
+        ]).then((res) => {
+            const { name, id, email, school } = res;
+
+            staff.push(new Intern(name, id, email, school));
+
+            getEmployeeInfo();
         });
 }
 
 
 
 
+
+
+
+
 getManagerInfo();
+
+
+
+
 
 
 // After the user has input all employees desired, call the `render` function (required
